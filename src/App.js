@@ -1,23 +1,14 @@
-import logo from './logo.svg';
+import { useState } from 'react';
 import './App.css';
+import { BurgerDrum, BURGER_DRUM_VIEW } from "./components/burger-drum/burger-drum";
 
 function App() {
+
+  const {burgerState, setBurgerState } = useState(BURGER_DRUM_VIEW.burger);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <BurgerDrum view={burgerState} />
     </div>
   );
 }
