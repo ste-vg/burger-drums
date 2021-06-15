@@ -3,21 +3,15 @@ import { Stage } from "./stage";
 import './burger-drum.css';
 import { Manager } from "./manager";
 
-const VIEW_STATES = {
-  loading: 'loading',
-  burger: 'burger',
-  drums: 'drums'
-}
-
 const VIEW_STATE_MACHINE = {
   loading: {
-    loaded: VIEW_STATES.burger
+    loadComplete: 'burger'
   },
   burger: {
-    toggle: VIEW_STATES.drums
+    toggle: 'drums'
   },
   drums: {
-    toggle: VIEW_STATES.burger
+    toggle: 'burger'
   }
 }
 
@@ -29,19 +23,19 @@ function miniStateMachine(currentState, action) {
 function BurgerDrum() {
 
   const mount = useRef();  
-  const [view, dispatch] = useReducer(miniStateMachine, VIEW_STATES.loading);  
-  const [director, setDirector] = useState(null);
+  const [view, dispatch] = useReducer(miniStateMachine, 'loading');  
+  const [manager, setManager] = useState(null);
 
   const init = () => {
-    if(mount)
+    if(mount.current)
     {
-      const _stage = new Stage(mount.current)
-      const _manager = new Manager(_stage, dispatch);
+      const stage = new Stage(mount.current)
+      const _manager = new Manager(stage, dispatch);
   
-      setDirector(_manager);
+      setManager(_manager);
 
       return () => {
-        _stage.destroy();
+        stage.destroy();
         _manager.fire();
       }
     }
@@ -50,9 +44,7 @@ function BurgerDrum() {
   const toggleView = () => { dispatch('toggle') }
 
   useEffect(init, [mount])
-  useEffect(() => {
-    if(director) director.updateView(view)
-  }, [view, director])
+  useEffect(() => { if(manager) manager.updateView(view) }, [view, manager])
 
   return (
     <div className="burger-drum">

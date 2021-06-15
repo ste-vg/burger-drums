@@ -21,11 +21,9 @@ class Stage {
     this.setupRenderer();
     
     this.onResize();
+    window.addEventListener('resize', () => this.onResize());
+    
     this.tick();
-
-    this.onResize = this.onResize.bind(this);
-
-    window.addEventListener('resize', this.onResize);
   }
 
   setupLights() {
