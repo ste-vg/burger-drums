@@ -2,6 +2,7 @@ const DRUM_SETTINGS = {
   "bun-bottom": {
     "sound": "snare.mp3",
     "key": "q",
+    "direction": "y",
     "position": {
       "x": -1.6,
       "y": 1.55,
@@ -21,6 +22,7 @@ const DRUM_SETTINGS = {
   "bun-top": {
     "sound": "bass.mp3",
     "key": "w",
+    "direction": "z",
     "position": {
       "x": 0,
       "y": 0.9,
@@ -57,6 +59,7 @@ const DRUM_SETTINGS = {
   "patty-1": {
     "sound": "tom-1.mp3",
     "key": "e",
+    "direction": "y",
     "position": {
       "x": -0.5,
       "y": 2.1,
@@ -76,6 +79,7 @@ const DRUM_SETTINGS = {
   "lettuce": {
     "sound": "tom-3.mp3",
     "key": "r",
+    "direction": "y",
     "position": {
       "x": 1.6,
       "y": 1.4000000000000001,
@@ -110,8 +114,9 @@ const DRUM_SETTINGS = {
     }
   },
   "cheese-2": {
-    "sound": "symbal-1.mp3",
+    "sound": "cymbal-1.mp3",
     "key": "t",
+    "direction": "y",
     "position": {
       "x": -0.98,
       "y": 2.43,
@@ -131,6 +136,7 @@ const DRUM_SETTINGS = {
   "patty-2": {
     "sound": "tom-2.mp3",
     "key": "y",
+    "direction": "y",
     "position": {
       "x": 0.6000000000000001,
       "y": 2.1,
@@ -148,8 +154,9 @@ const DRUM_SETTINGS = {
     }
   },
   "cheese-2001": {
-    "sound": "symbal-2.mp3",
+    "sound": "cymbal-2.mp3",
     "key": "u",
+    "direction": "y",
     "position": {
       "x": 1,
       "y": 2.85,

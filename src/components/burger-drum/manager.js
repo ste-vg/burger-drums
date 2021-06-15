@@ -9,19 +9,19 @@ import { DRUM_SETTINGS } from './drum-settings'
 gsap.registerPlugin(MotionPathPlugin);
 class Manager {
 
-  constructor(stage, dispatch) {
+  constructor(stage, view, dispatch) {
     this.stage = stage;
     this.dispatch = dispatch;
-    this.debug = true;
+    this.debug = false;
+
+    this.view = view;
 
     this.gui = new dat.GUI();
-    
     this.debugFunctions = {export: () => {console.log(JSON.stringify(DRUM_SETTINGS, null, 2))}};
-
+    this.gui.add(this.debugFunctions, 'export')
     if(!this.debug) this.gui.hide();
 
-    this.gui.add(this.debugFunctions, 'export')
-
+    
     this.models = {
       burger: {      
         file: 'burger-reduced.glb',
@@ -35,7 +35,37 @@ class Manager {
       }
     }
 
+    
     this.loadModels();
+  }
+
+  setupSounds() {
+    let sounds = {}
+
+    console.log(this.models.burger.items)
+
+    for (const [name, drum] of Object.entries(DRUM_SETTINGS)) {
+      if(drum.sound){
+        sounds[drum.key] = {
+          audio: new Audio(`/sounds/${drum.sound}`),
+          item: this.models.burger.items[name],
+          from: {[drum.direction] : drum.position[drum.direction] + 0.5},
+          to: {[drum.direction] : drum.position[drum.direction]},
+        }
+      }
+    }
+
+    document.addEventListener("keydown", (event) => {
+        
+        const sound = sounds[event.key];
+        if(this.view === 'drums' && sound)
+        {
+          sound.audio.currentTime = 0;
+          sound.audio.play()
+          gsap.fromTo(sound.item.position, {...sound.from}, {...sound.to, ease: 'elastic' })
+        }
+    })
+
   }
 
   addDebug(item){
@@ -65,6 +95,8 @@ class Manager {
     console.log('loadModels');
 
     const loadingManager = new THREE.LoadingManager(() => {
+      this.setupSounds();
+      this.moveToBurger(true);
       this.dispatch('loadComplete');
     })
 
@@ -77,8 +109,6 @@ class Manager {
         `/models/${model.file}`,
         (gltf) =>
         {
-           
-            
             gltf.scene.traverse(child => {
               
               if(child instanceof THREE.Mesh)
@@ -118,7 +148,7 @@ class Manager {
     Object.keys(this.models.burger.items).forEach(key => {
       const item = this.models.burger.items[key];
       const pos = DRUM_SETTINGS[item.name];
-      
+
       gsap.to(item.position, {motionPath: [{x: pos.position.x , y: pos.position.y * 2 + 0.5, z: pos.position.z}, {...pos.position}], duration: 2, ease: 'power4.inOut'})
       gsap.to(item.rotation, {...pos.rotation, duration: 1, delay: 0.5, ease: 'power4.inOut'})
       gsap.to(item.scale, {...pos.scale, duration: 1, ease: 'power4.inOut'})
@@ -144,26 +174,28 @@ class Manager {
     }
   }
   
-  moveToBurger() {
+  moveToBurger(instant = false) {
 
     gsap.to(this.stage.camera.position, {...this.stage.camera.home.position})
     gsap.to(this.stage.lookAt, { x: 0, y: 1, z: 0 })
 
     Object.keys(this.models.burger.items).forEach(key => {
       const item = this.models.burger.items[key];
-      gsap.to(item.position, {motionPath: [{x: item.home.position.x , y: item.home.position.y * 3, z: item.home.position.z}, {...item.home.position}], duration: 2, ease: 'bounce'})
-      gsap.to(item.rotation, {...item.home.rotation, duration: 1.5, ease: 'power4.inOut'})
-      gsap.to(item.scale, {...item.home.scale, duration: 1.5, ease: 'power4.inOut'})
+      gsap.to(item.position, {motionPath: [{x: item.home.position.x , y: item.home.position.y * 3, z: item.home.position.z}, {...item.home.position}], duration: instant ? 0 : 2, ease: 'bounce'})
+      gsap.to(item.rotation, {...item.home.rotation, duration: instant ? 0 : 1.5, ease: 'power4.inOut'})
+      gsap.to(item.scale, {...item.home.scale, duration: instant ? 0 : 1.5, ease: 'power4.inOut'})
     })
 
     Object.keys(this.models.drumkit.items).forEach(key => {
       const item = this.models.drumkit.items[key];
-      gsap.to(item.position, {y: -3})
-      gsap.to(item.rotation, {z: (Math.random() * 0.5) - 0.25})
+      gsap.to(item.position, {y: -3, duration: instant ? 0 : 0.5})
+      gsap.to(item.rotation, {z: (Math.random() * 0.5) - 0.25, duration: instant ? 0 : 0.5})
     })
   }
 
   updateView(newState) {
+    this.view = newState;
+    gsap.globalTimeline.clear();
     if(newState === 'burger') this.moveToBurger();
     if(newState === 'drums') this.moveToDrums();
   }

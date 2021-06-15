@@ -30,7 +30,7 @@ function BurgerDrum() {
     if(mount.current)
     {
       const stage = new Stage(mount.current)
-      const _manager = new Manager(stage, dispatch);
+      const _manager = new Manager(stage, view, dispatch);
   
       setManager(_manager);
 
