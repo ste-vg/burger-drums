@@ -7,15 +7,18 @@ class Stage {
     this.container = mount;
       
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color( '#ff00ff' );
+    this.scene.background = new THREE.Color( '#142522' );
     
     this.size = {
       width: 1,
       height: 1
     }
 
+    this.setupLights();
     this.setupCamera();
+    
     this.setupRenderer();
+    
     this.onResize();
     this.tick();
 
@@ -26,19 +29,20 @@ class Stage {
 
   setupLights() {
 
-    this.directionalLight = new THREE.DirectionalLight('#ffffff', 3);
-    this.directionalLight.castShadow = true;
-    this.directionalLight.shadow.camera.far = 15;
-    this.directionalLight.shadow.mapSize.set(1024, 1024);
-    this.directionalLight.shadow.normalBias = 0.05;
-    this.directionalLight.position.set(0.25, 3, - 2.25);
-    this.add(this.directionalLight);
+    const directionalLight = new THREE.DirectionalLight('#ffffff', 3);
+    directionalLight.castShadow = true;
+    // directionalLight.shadow.camera.far = 15;
+    // directionalLight.shadow.mapSize.set(1024, 1024);
+    // directionalLight.shadow.normalBias = 0.05;
+    directionalLight.position.set(5, 10, 7);
+    this.add(directionalLight);
   }
 
   setupCamera() {
 
-    this.camera = new THREE.PerspectiveCamera(60, this.size.width / this.size.height, 0.1, 100);
-    this.camera.position.set(4, 1, - 4);
+    this.camera = new THREE.PerspectiveCamera(40, this.size.width / this.size.height, 0.1, 100);
+    this.camera.position.set(3, 3, -5);
+    
     this.add(this.camera);
   }
 
@@ -72,12 +76,13 @@ class Stage {
   }
 
   tick() {
-
+    this.camera.lookAt(-2, 0, 3);
+    
     this.renderer.render(this.scene, this.camera);
     window.requestAnimationFrame(() => this.tick())
   }
 
-  add(element) { this.scene.add(element); }
+  add(element) { this.scene.add(element);}
   
   destroy() {
 
