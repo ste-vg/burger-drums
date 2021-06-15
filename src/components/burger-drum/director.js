@@ -12,6 +12,12 @@ class Director {
     this.models = {
       burger: {      
         file: 'burger-2.glb',
+        shadows: true,
+        items: {}
+      },
+      drumkit: {      
+        file: 'drums.glb',
+        shadows: false,
         items: {}
       }
     }
@@ -35,53 +41,68 @@ class Director {
         `/models/${model.file}`,
         (gltf) =>
         {
-            gltf.scene.traverse(child => {
-              
-              if(child instanceof THREE.Mesh)
-              {
-                child.material.receiveShadows = true;
-                child.material.castShadows = true;
-              }
-            })
+            if(model.shadows) {
+              gltf.scene.traverse(child => {
+                
+                if(child instanceof THREE.Mesh)
+                {
+                  child.material.receiveShadows = true;
+                  child.material.castShadows = true;
+                }
+              })
+            }
             
             const children = [ ...gltf.scene.children ]
 
             children.forEach(child => {
-              console.log(child.name)
+
               model.items[child.name] = child;
               child.home = {
                 position: {...child.position},
-                rotation: {...child.rotation},
+                rotation: {x: child.rotation.x, y: child.rotation.y, z: child.rotation.z},
+                scale: {...child.scale},
               }
               child.position.y *= 2;
               
               this.stage.add(child)
             })
-              
         }
       )  
     })
-      
   }
 
   moveToDrums() {
-    Object.keys(this.models.burger.items).forEach(key => {
-      const item = this.models.burger.items[key];
-      gsap.to(item.position, {y: item.position.y * Math.random()})
-      gsap.to(item.rotation, {z: (Math.random() * 0.5) - 0.25})
+    
+    const burger = this.models.burger.items;
+
+    gsap.to(burger['bun-top'].position, {x: 1.3, y: 1.6, z: 0.6, duration: 1, ease: 'power4.out'})
+    gsap.to(burger['bun-top'].rotation, {x: Math.PI, duration: 1, ease: 'power4.out'})
+    gsap.to(burger['bun-top'].scale, {x: 0.6, y: -0.5, z: 0.4, duration: 1, ease: 'power4.out'})
+    
+    Object.keys(this.models.drumkit.items).forEach(key => {
+      const item = this.models.drumkit.items[key];
+      gsap.to(item.position, {...item.home.position, duration: 1, ease: 'power4.out'})
+      gsap.to(item.rotation, {...item.home.rotation, duration: 1, ease: 'power4.out'})
+      gsap.to(item.scale, {...item.home.scale, duration: 1, ease: 'power4.out'})
     })
   }
   
   moveToBurger() {
     Object.keys(this.models.burger.items).forEach(key => {
       const item = this.models.burger.items[key];
-      gsap.to(item.position, {...item.home.position})
-      gsap.to(item.rotation, {...item.home.rotation})
+      gsap.to(item.position, {...item.home.position, duration: 1.5, ease: 'power4.inOut'})
+      gsap.to(item.rotation, {...item.home.rotation, duration: 1.5, ease: 'power4.inOut'})
+      gsap.to(item.scale, {...item.home.scale, duration: 1.5, ease: 'power4.inOut'})
+    })
+
+    Object.keys(this.models.drumkit.items).forEach(key => {
+      const item = this.models.drumkit.items[key];
+      gsap.to(item.position, {x: item.position.x * -2 + Math.random(), y: -2})
+      gsap.to(item.rotation, {z: (Math.random() * 0.5) - 0.25})
     })
   }
 
   updateView(newState) {
-
     if(newState === 'burger') this.moveToBurger();
     if(newState === 'drums') this.moveToDrums();
   }

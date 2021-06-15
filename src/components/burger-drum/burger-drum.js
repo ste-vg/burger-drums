@@ -6,7 +6,7 @@ import { Director } from "./director";
 const VIEW_STATES = {
   loading: 'loading',
   burger: 'burger',
-  drum: 'drum'
+  drums: 'drums'
 }
 
 const VIEW_STATE_MACHINE = {
@@ -14,9 +14,9 @@ const VIEW_STATE_MACHINE = {
     loaded: VIEW_STATES.burger
   },
   burger: {
-    toggle: VIEW_STATES.drum
+    toggle: VIEW_STATES.drums
   },
-  drum: {
+  drums: {
     toggle: VIEW_STATES.burger
   }
 }
