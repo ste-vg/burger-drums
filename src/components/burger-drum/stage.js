@@ -16,7 +16,8 @@ class Stage {
 
     this.setupLights();
     this.setupCamera();
-    
+    this.setupFloor();
+    this.setupFog();
     this.setupRenderer();
     
     this.onResize();
@@ -29,21 +30,44 @@ class Stage {
 
   setupLights() {
 
-    const directionalLight = new THREE.DirectionalLight('#ffffff', 3);
+    const directionalLight = new THREE.DirectionalLight('#ffffff', 2);
     directionalLight.castShadow = true;
-    // directionalLight.shadow.camera.far = 15;
-    // directionalLight.shadow.mapSize.set(1024, 1024);
-    // directionalLight.shadow.normalBias = 0.05;
-    directionalLight.position.set(5, 10, 7);
+    directionalLight.shadow.camera.far = 10;
+    directionalLight.shadow.mapSize.set(1024, 1024);
+    directionalLight.shadow.normalBias = 0.05;
+    directionalLight.position.set(2, 4, 1);
     this.add(directionalLight);
+
+    const hemisphereLight = new THREE.HemisphereLight( 0xffffff, 0x522142, 0.5 );
+    this.add(hemisphereLight)
   }
 
   setupCamera() {
 
+    this.lookAt = new THREE.Vector3(0, 1, 0);
     this.camera = new THREE.PerspectiveCamera(40, this.size.width / this.size.height, 0.1, 100);
-    this.camera.position.set(3, 3, -5);
+    this.camera.position.set(0, 3, 6);
+    this.camera.home = {
+      position: { ...this.camera.position }
+    }
     
     this.add(this.camera);
+  }
+
+  setupFloor() {
+    const plane = new THREE.PlaneGeometry(100, 100);
+    const floorMaterial = new THREE.MeshStandardMaterial({ color: '#522142' })
+    const floor = new THREE.Mesh(plane, floorMaterial);
+    floor.receiveShadow = true;
+    
+    floor.rotateX(-Math.PI * 0.5)
+
+    this.add(floor);
+  }
+
+  setupFog() {
+    const fog = new THREE.Fog("#142522", 6, 20)
+    this.scene.fog = fog;
   }
 
   setupRenderer() {
@@ -76,7 +100,7 @@ class Stage {
   }
 
   tick() {
-    this.camera.lookAt(-2, 0, 3);
+    this.camera.lookAt(this.lookAt);
     
     this.renderer.render(this.scene, this.camera);
     window.requestAnimationFrame(() => this.tick())

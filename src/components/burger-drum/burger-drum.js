@@ -1,7 +1,7 @@
 import { useEffect, useRef, useReducer, useState } from "react"
 import { Stage } from "./stage";
 import './burger-drum.css';
-import { Director } from "./director";
+import { Manager } from "./manager";
 
 const VIEW_STATES = {
   loading: 'loading',
@@ -36,13 +36,13 @@ function BurgerDrum() {
     if(mount)
     {
       const _stage = new Stage(mount.current)
-      const _director = new Director(_stage, dispatch);
+      const _manager = new Manager(_stage, dispatch);
   
-      setDirector(_director);
+      setDirector(_manager);
 
       return () => {
         _stage.destroy();
-        _director.fire();
+        _manager.fire();
       }
     }
   }
