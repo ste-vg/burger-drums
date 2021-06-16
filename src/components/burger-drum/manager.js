@@ -13,7 +13,8 @@ class Manager {
     this.stage = stage;
     this.dispatch = dispatch;
     this.debug = false;
-
+    this.sounds = {};
+    this.raycaster = new THREE.Raycaster();
     this.view = view;
 
     this.gui = new dat.GUI();
@@ -39,49 +40,87 @@ class Manager {
     this.loadModels();
   }
 
+  playSound(id) {
+    const sound = this.sounds[id];
+    if(this.view === 'drums' && sound)
+    {
+      sound.audio.currentTime = 0;
+      sound.audio.play()
+      gsap.fromTo(sound.object.position, {...sound.from}, {...sound.to, ease: 'elastic' })
+    }
+  }
+
   setupSounds() {
-    let sounds = {}
+    
 
     console.log(this.models.burger.items)
 
+    const testObjects = [];
+
     for (const [name, drum] of Object.entries(DRUM_SETTINGS)) {
       if(drum.sound){
-        sounds[drum.key] = {
+
+        const sound = {
           audio: new Audio(`/sounds/${drum.sound}`),
-          item: this.models.burger.items[name],
+          object: this.models.burger.items[name],
           from: {[drum.direction] : drum.position[drum.direction] + 0.5},
           to: {[drum.direction] : drum.position[drum.direction]},
         }
+
+        // test doesn't work on groups, so need to add children and rename
+        if(sound.object instanceof THREE.Mesh)
+        {
+          testObjects.push(sound.object)
+        }
+        else {
+          sound.object.children.forEach(obj => {
+            obj.name = sound.object.name;
+            testObjects.push(obj)
+          })
+        }
+
+        this.sounds[drum.key] = sound;
+        this.sounds[name] = sound;
       }
     }
 
-    document.addEventListener("keydown", (event) => {
+    document.addEventListener("keydown", (event) => { this.playSound(event.key)})
+
+    this.stage.container.addEventListener('click', (event) =>
+    {
+        // x= -1 to 1
+        // y= -1 to 1 (flipped)
+        const mouse = {
+          x: event.clientX / this.stage.size.width * 2 - 1,
+          y: - (event.clientY / this.stage.size.height) * 2 + 1
+        }
         
-        const sound = sounds[event.key];
-        if(this.view === 'drums' && sound)
-        {
-          sound.audio.currentTime = 0;
-          sound.audio.play()
-          gsap.fromTo(sound.item.position, {...sound.from}, {...sound.to, ease: 'elastic' })
+        this.raycaster.setFromCamera(mouse, this.stage.camera);
+        const intersects = this.raycaster.intersectObjects(testObjects);
+
+        
+
+        if(intersects.length) {
+          this.playSound(intersects[0].object.name)
         }
     })
 
   }
 
-  addDebug(item){
-      const name = item.name;
-      
-      // this.positionsDebug[name] = {
-      //   position: {x: item.position.x, y: 5, z: item.position.z},
-      //   rotation: {x: item.rotation.x, y: item.rotation.y, z: item.rotation.z},
-      //   scale: {x: item.scale.x, y: item.scale.y, z: item.scale.z},
-      // }
+  setupDrumSettings(item){
+    this.positionsDebug[item.name] = {
+        position: {x: item.position.x, y: 5, z: item.position.z},
+        rotation: {x: item.rotation.x, y: item.rotation.y, z: item.rotation.z},
+        scale: {x: item.scale.x, y: item.scale.y, z: item.scale.z},
+      }
+  }
 
-      const folder = this.gui.addFolder(name);
+  addDebug(item){
+      const folder = this.gui.addFolder(item.name);
 
       ['position', 'rotation', 'scale'].forEach(prop => {
         ['x', 'y', 'z'].forEach(direction => {
-          folder.add(DRUM_SETTINGS[name][prop], direction)
+          folder.add(DRUM_SETTINGS[item.name][prop], direction)
                 .min(-5)
                 .max(5)
                 .step(0.01)
@@ -96,7 +135,6 @@ class Manager {
 
     const loadingManager = new THREE.LoadingManager(() => {
       this.setupSounds();
-      this.moveToBurger(true);
       this.dispatch('loadComplete');
     })
 
@@ -122,15 +160,20 @@ class Manager {
 
             children.forEach(child => {
 
-              if(model.debug) this.addDebug(child);
-
               model.items[child.name] = child;
+              
+              if(model.debug) {
+                // this.setupDrumSettings();
+                this.addDebug(child);
+              }
+
               child.home = {
                 position: {...child.position},
                 rotation: {x: child.rotation.x, y: child.rotation.y, z: child.rotation.z},
                 scale: {...child.scale},
               }
               child.position.y *= 2;
+              child.visible = false;
               
               this.stage.add(child)
             })
@@ -156,6 +199,7 @@ class Manager {
     
     Object.keys(this.models.drumkit.items).forEach(key => {
       const item = this.models.drumkit.items[key];
+      item.visible = true;
       gsap.to(item.position, {...item.home.position, duration: 1, ease: 'power4.out'})
       gsap.to(item.rotation, {...item.home.rotation, duration: 1, ease: 'power4.out'})
       gsap.to(item.scale, {...item.home.scale, duration: 1, ease: 'power4.out'})
@@ -174,23 +218,25 @@ class Manager {
     }
   }
   
-  moveToBurger(instant = false) {
+  moveToBurger() {
 
     gsap.to(this.stage.camera.position, {...this.stage.camera.home.position})
     gsap.to(this.stage.lookAt, { x: 0, y: 1, z: 0 })
 
     Object.keys(this.models.burger.items).forEach(key => {
       const item = this.models.burger.items[key];
-      const delay = instant ? 0 : 0.2 + item.home.position.y * 0.4;
-      gsap.to(item.position, {motionPath: [{x: item.home.position.x , y: item.home.position.y * 3, z: item.home.position.z}, {...item.home.position}], delay, duration: instant ? 0 : 1.5, ease: 'bounce'})
-      gsap.to(item.rotation, {...item.home.rotation, duration: instant ? 0 : 1, delay, ease: 'power4.inOut'})
-      gsap.to(item.scale, {...item.home.scale, duration: instant ? 0 : 1, delay,  ease: 'power4.inOut'})
+      const delay = 0.2 + item.home.position.y * 0.4;
+
+      item.visible = true;
+      gsap.to(item.position, {motionPath: [{x: item.home.position.x , y: item.home.position.y * 3, z: item.home.position.z}, {...item.home.position}], delay, duration: 1.5, ease: 'bounce'})
+      gsap.to(item.rotation, {...item.home.rotation, duration: 1, delay, ease: 'power4.inOut'})
+      gsap.to(item.scale, {...item.home.scale, duration: 1, delay,  ease: 'power4.inOut'})
     })
 
     Object.keys(this.models.drumkit.items).forEach(key => {
       const item = this.models.drumkit.items[key];
-      gsap.to(item.position, {y: -3, duration: instant ? 0 : 0.5})
-      gsap.to(item.rotation, {z: (Math.random() * 0.5) - 0.25, duration: instant ? 0 : 0.5})
+      gsap.to(item.position, {y: -3, duration: 0.5})
+      gsap.to(item.rotation, {z: (Math.random() * 0.5) - 0.25, duration: 0.5})
     })
   }
 
