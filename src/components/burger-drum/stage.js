@@ -1,5 +1,8 @@
 import * as THREE from "three";
-
+const COLORS = {
+  background: '#142522',
+  floor: '#CF0000'
+}
 class Stage {
 
   constructor(mount) {
@@ -7,7 +10,7 @@ class Stage {
     this.container = mount;
       
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color( '#142522' );
+    this.scene.background = new THREE.Color( COLORS.background );
     
     this.size = {
       width: 1,
@@ -36,7 +39,7 @@ class Stage {
     directionalLight.position.set(2, 4, 1);
     this.add(directionalLight);
 
-    const hemisphereLight = new THREE.HemisphereLight( 0xffffff, 0x522142, 0.5 );
+    const hemisphereLight = new THREE.HemisphereLight( 0xffffff, COLORS.floor, 0.5 );
     this.add(hemisphereLight)
   }
 
@@ -54,7 +57,7 @@ class Stage {
 
   setupFloor() {
     const plane = new THREE.PlaneGeometry(100, 100);
-    const floorMaterial = new THREE.MeshStandardMaterial({ color: '#522142' })
+    const floorMaterial = new THREE.MeshStandardMaterial({ color: COLORS.floor })
     const floor = new THREE.Mesh(plane, floorMaterial);
     floor.receiveShadow = true;
     
@@ -64,7 +67,7 @@ class Stage {
   }
 
   setupFog() {
-    const fog = new THREE.Fog("#142522", 6, 20)
+    const fog = new THREE.Fog(COLORS.background, 6, 20)
     this.scene.fog = fog;
   }
 
