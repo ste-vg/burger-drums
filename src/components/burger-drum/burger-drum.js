@@ -3,34 +3,17 @@ import { Stage } from "./stage";
 import './burger-drum.css';
 import { Manager } from "./manager";
 
-const VIEW_STATE_MACHINE = {
-  loading: {
-    loadComplete: 'burger'
-  },
-  burger: {
-    toggle: 'drums'
-  },
-  drums: {
-    toggle: 'burger'
-  }
-}
-
-function miniStateMachine(currentState, action) {
-  const nextState = VIEW_STATE_MACHINE[currentState][action]
-  return nextState !== undefined ? nextState : currentState
-}
-
 function BurgerDrum() {
 
   const mount = useRef();  
-  const [view, dispatch] = useReducer(miniStateMachine, 'loading');  
+  const [view, setView] = useState('loading');  
   const [manager, setManager] = useState(null);
   
   const init = () => {
     if(mount.current)
     {
       const stage = new Stage(mount.current)
-      const _manager = new Manager(stage, view, dispatch);
+      const _manager = new Manager(stage, view, setView);
   
       setManager(_manager);
 
@@ -41,7 +24,7 @@ function BurgerDrum() {
     }
   }
 
-  const toggleView = () => { dispatch('toggle') }
+  const toggleView = () => { setView(view === 'burger' ? 'drums' : 'burger') }
 
   useEffect(init, [mount])
   useEffect(() => { if(manager) manager.updateView(view) }, [view, manager])

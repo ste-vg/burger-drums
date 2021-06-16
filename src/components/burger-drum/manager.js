@@ -9,9 +9,9 @@ import { drumSettings } from './drum-settings'
 gsap.registerPlugin(MotionPathPlugin);
 class Manager {
 
-  constructor(stage, view, dispatch) {
+  constructor(stage, view, setView) {
     this.stage = stage;
-    this.dispatch = dispatch;
+    this.setView = setView;
     this.debug = false;
     this.sounds = {};
     this.raycaster = new THREE.Raycaster();
@@ -135,7 +135,7 @@ class Manager {
 
     const loadingManager = new THREE.LoadingManager(() => {
       this.setupSounds();
-      this.dispatch('loadComplete');
+      this.setView('burger');
     })
 
     const gltfLoader = new GLTFLoader(loadingManager)
