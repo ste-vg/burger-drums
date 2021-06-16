@@ -1,4 +1,4 @@
-const DRUM_SETTINGS = {
+const drumSettings = {
   "bun-bottom": {
     "sound": "snare.mp3",
     "key": "q",
@@ -153,7 +153,7 @@ const DRUM_SETTINGS = {
       "z": 0.5
     }
   },
-  "cheese-2001": {
+  "cheese-1": {
     "sound": "cymbal-2.mp3",
     "key": "u",
     "direction": "y",
@@ -175,4 +175,4 @@ const DRUM_SETTINGS = {
   }
 }
 
-export { DRUM_SETTINGS }
+export { drumSettings }

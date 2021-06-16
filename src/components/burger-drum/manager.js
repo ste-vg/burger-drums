@@ -4,7 +4,7 @@ import { MotionPathPlugin } from "gsap/MotionPathPlugin";
 import * as THREE from "three";
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import * as dat from 'dat.gui'
-import { DRUM_SETTINGS } from './drum-settings'
+import { drumSettings } from './drum-settings'
 
 gsap.registerPlugin(MotionPathPlugin);
 class Manager {
@@ -18,7 +18,7 @@ class Manager {
     this.view = view;
 
     this.gui = new dat.GUI();
-    this.debugFunctions = {export: () => {console.log(JSON.stringify(DRUM_SETTINGS, null, 2))}};
+    this.debugFunctions = {export: () => {console.log(JSON.stringify(drumSettings, null, 2))}};
     this.gui.add(this.debugFunctions, 'export')
     if(!this.debug) this.gui.hide();
 
@@ -57,7 +57,7 @@ class Manager {
 
     const testObjects = [];
 
-    for (const [name, drum] of Object.entries(DRUM_SETTINGS)) {
+    for (const [name, drum] of Object.entries(drumSettings)) {
       if(drum.sound){
 
         const sound = {
@@ -120,7 +120,7 @@ class Manager {
 
       ['position', 'rotation', 'scale'].forEach(prop => {
         ['x', 'y', 'z'].forEach(direction => {
-          folder.add(DRUM_SETTINGS[item.name][prop], direction)
+          folder.add(drumSettings[item.name][prop], direction)
                 .min(-5)
                 .max(5)
                 .step(0.01)
@@ -190,7 +190,7 @@ class Manager {
 
     Object.keys(this.models.burger.items).forEach(key => {
       const item = this.models.burger.items[key];
-      const pos = DRUM_SETTINGS[item.name];
+      const pos = drumSettings[item.name];
       const delay = 0.6 - item.home.position.y * 0.6;
       gsap.to(item.position, {motionPath: [{x: pos.position.x , y: pos.position.y + 0.5 , z: pos.position.z}, {...pos.position}], delay, duration: 1, ease: 'power2.inOut'})
       gsap.to(item.rotation, {...pos.rotation, duration: 3, delay: delay + 0.5, ease: 'elastic'})
@@ -211,9 +211,9 @@ class Manager {
     {
       Object.keys(this.models.burger.items).forEach(key => {
         const item = this.models.burger.items[key];
-        item.position.copy(DRUM_SETTINGS[item.name].position)
-        item.rotation.setFromVector3(DRUM_SETTINGS[item.name].rotation)
-        item.scale.copy(DRUM_SETTINGS[item.name].scale)
+        item.position.copy(drumSettings[item.name].position)
+        item.rotation.setFromVector3(drumSettings[item.name].rotation)
+        item.scale.copy(drumSettings[item.name].scale)
       })
     }
   }
