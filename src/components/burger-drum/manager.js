@@ -25,7 +25,7 @@ class Manager {
     
     this.models = {
       burger: {      
-        file: 'burger-reduced.glb',
+        file: 'burger.glb',
         debug: true,
         items: {}
       },
