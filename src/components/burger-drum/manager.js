@@ -63,7 +63,7 @@ class Manager {
         const sound = {
           audio: new Audio(`/sounds/${drum.sound}`),
           object: this.models.burger.items[name],
-          from: {[drum.direction] : drum.position[drum.direction] + 0.5},
+          from: {[drum.direction] : drum.position[drum.direction] - 0.3},
           to: {[drum.direction] : drum.position[drum.direction]},
         }
 

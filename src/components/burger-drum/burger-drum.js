@@ -25,7 +25,7 @@ function BurgerDrum() {
   const mount = useRef();  
   const [view, dispatch] = useReducer(miniStateMachine, 'loading');  
   const [manager, setManager] = useState(null);
-
+  
   const init = () => {
     if(mount.current)
     {
