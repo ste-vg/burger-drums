@@ -1,7 +1,7 @@
 import * as THREE from "three";
 const COLORS = {
   background: '#142522',
-  floor: '#CF0000'
+  floor: '#522142'
 }
 class Stage {
 
