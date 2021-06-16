@@ -148,10 +148,10 @@ class Manager {
     Object.keys(this.models.burger.items).forEach(key => {
       const item = this.models.burger.items[key];
       const pos = DRUM_SETTINGS[item.name];
-
-      gsap.to(item.position, {motionPath: [{x: pos.position.x , y: pos.position.y * 2 + 0.5, z: pos.position.z}, {...pos.position}], duration: 2, ease: 'power4.inOut'})
-      gsap.to(item.rotation, {...pos.rotation, duration: 1, delay: 0.5, ease: 'power4.inOut'})
-      gsap.to(item.scale, {...pos.scale, duration: 1, ease: 'power4.inOut'})
+      const delay = 0.6 - item.home.position.y * 0.6;
+      gsap.to(item.position, {motionPath: [{x: pos.position.x , y: pos.position.y + 0.5 , z: pos.position.z}, {...pos.position}], delay, duration: 1, ease: 'power2.inOut'})
+      gsap.to(item.rotation, {...pos.rotation, duration: 3, delay: delay + 0.5, ease: 'elastic'})
+      gsap.to(item.scale, {...pos.scale, duration: 2, delay: delay + 0.5, ease: 'elastic'})
     })
     
     Object.keys(this.models.drumkit.items).forEach(key => {
@@ -181,9 +181,10 @@ class Manager {
 
     Object.keys(this.models.burger.items).forEach(key => {
       const item = this.models.burger.items[key];
-      gsap.to(item.position, {motionPath: [{x: item.home.position.x , y: item.home.position.y * 3, z: item.home.position.z}, {...item.home.position}], duration: instant ? 0 : 2, ease: 'bounce'})
-      gsap.to(item.rotation, {...item.home.rotation, duration: instant ? 0 : 1.5, ease: 'power4.inOut'})
-      gsap.to(item.scale, {...item.home.scale, duration: instant ? 0 : 1.5, ease: 'power4.inOut'})
+      const delay = instant ? 0 : 0.2 + item.home.position.y * 0.4;
+      gsap.to(item.position, {motionPath: [{x: item.home.position.x , y: item.home.position.y * 3, z: item.home.position.z}, {...item.home.position}], delay, duration: instant ? 0 : 1.5, ease: 'bounce'})
+      gsap.to(item.rotation, {...item.home.rotation, duration: instant ? 0 : 1, delay, ease: 'power4.inOut'})
+      gsap.to(item.scale, {...item.home.scale, duration: instant ? 0 : 1, delay,  ease: 'power4.inOut'})
     })
 
     Object.keys(this.models.drumkit.items).forEach(key => {
