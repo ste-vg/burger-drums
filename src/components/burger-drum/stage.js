@@ -45,7 +45,7 @@ class Stage {
 
   setupCamera() {
 
-    this.lookAt = new THREE.Vector3(0, 1, 0);
+    this.lookAt = new THREE.Vector3(2, 1, 0);
     this.camera = new THREE.PerspectiveCamera(40, this.size.width / this.size.height, 0.1, 100);
     this.camera.position.set(0, 3, 6);
     this.camera.home = {

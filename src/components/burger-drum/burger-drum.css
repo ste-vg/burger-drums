@@ -13,24 +13,39 @@ html, body {
   background-color: #142522;
 }
 
+.burger-drum {
+  overflow: hidden;
+  position: relative;
+}
+
 .burger-drum  .container {
   width: 100vw;
   height: 60vw;     
   max-height: 100vh;
+  
 }
 
 .info {
   position: absolute;
-  bottom: 50px;
-  left: 0;
+  bottom: 40px;
+  left: 40px;
   width: 40vw;
 
   display: flex;
   justify-content: center;
   align-items: flex-start;
   flex-direction: column;
-  padding: 50px;
 
+  transform: translateX(-50vw);
+  transition: transform 0.5s ease-in-out;
+}
+
+.presents {
+  margin-bottom: 20px;
+}
+
+.burger .info {
+  transform: translateX(0);
 }
 
 h1 {
@@ -83,6 +98,39 @@ button:disabled {
   opacity: 0.3;
 }
 
+.controls {
+  position: absolute;
+  bottom: 40px;
+  right: 40px;
+  width: calc(100% - 80px);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+
+  transform: translateY(200%);
+  transition: transform 0.5s ease-in-out;
+}
+
+.drums .controls {
+  transform: translateY(0%);
+}
+
+.loader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 50px;
+  font-family: 'Metal Mania', cursive;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.loading .loader {
+  opacity:10;
+}
+
 .controls span {
   text-transform: uppercase;
   padding: 2px;
@@ -92,5 +140,5 @@ button:disabled {
   border-radius: 6px;
   width: 20px;
   height: 20px;
-  margin-right: 10px
+  margin-left: 10px
 }

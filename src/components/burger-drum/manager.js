@@ -258,8 +258,8 @@ class Manager {
   
   moveToBurger() {
 
-    gsap.to(this.stage.camera.position, {...this.stage.camera.home.position})
-    gsap.to(this.stage.lookAt, { x: -1.5, y: 1, z: 0 })
+    gsap.to(this.stage.camera.position, {...this.stage.camera.home.position, duration: 0.6})
+    gsap.to(this.stage.lookAt, { x: -1.5, y: 1, z: 0, duration: 0.6 })
     gsap.to(this.stage, { light: 2 })
     gsap.to(this.spotlights.left.target.position, {x: -10, y: 1})
     gsap.to(this.spotlights.right.target.position, {x: 10, y: 1})

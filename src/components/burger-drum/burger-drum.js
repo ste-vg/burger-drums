@@ -30,19 +30,21 @@ function BurgerDrum() {
   useEffect(() => { if(manager) manager.updateView(view) }, [view, manager])
 
   return (
-    <div className="burger-drum">
+    <div className={`burger-drum ${view}`}>
       <div className="container" ref={mount}></div>
       <div className="info">
-        <p>Buns N' Roses presents:</p>
+        <p className="presents">Buns N' Roses presents:</p>
         <h1>Beat Burger</h1>
         <p>Our signature burger, inspired by legendary drummer <i>[your favorite drummer here]</i>. Order online now <i>(or don't because this is all pretend)</i> or transform this burger into a drum kit and play some sweet beats!</p>
         <div className="buttons">
           <button disabled>Order now</button>
-          <button onClick={(toggleView)}>{view === 'drums' ? 'Back' : 'Play'}</button>
+          <button onClick={(toggleView)}>Play</button>
         </div>
       </div>
-      <div className="controls">Tap the drums or use these keyboard keys: <span>Q</span><span>W</span><span>E</span><span>R</span><span>T</span><span>Y</span><span>U</span></div>
-      <div className="loading">Loading</div>
+      <div className="controls">
+        <button onClick={(toggleView)}>Back</button>
+        <div>Tap the drums or use these keyboard keys: <span>Q</span><span>W</span><span>E</span><span>R</span><span>T</span><span>Y</span><span>U</span></div></div>
+      <div className="loader">🤘 Loading 🤘</div>
     </div>
   )
 }
