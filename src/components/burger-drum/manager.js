@@ -120,17 +120,13 @@ class Manager {
 
     this.stage.container.addEventListener('click', (event) =>
     {
-        // x= -1 to 1
-        // y= -1 to 1 (flipped)
         const mouse = {
-          x: event.clientX / this.stage.size.width * 2 - 1,
-          y: - (event.clientY / this.stage.size.height) * 2 + 1
+          x: event.offsetX / this.stage.size.width * 2 - 1,
+          y: - (event.offsetY / this.stage.size.height) * 2 + 1
         }
         
         this.raycaster.setFromCamera(mouse, this.stage.camera);
         const intersects = this.raycaster.intersectObjects(testObjects);
-
-        
 
         if(intersects.length) {
           this.playSound(intersects[0].object.name)
@@ -163,8 +159,6 @@ class Manager {
   }
 
   loadModels() {
-    console.log('loadModels');
-
     const loadingManager = new THREE.LoadingManager(() => {
       this.setupSounds();
       this.setView('burger');
