@@ -36,8 +36,40 @@ class Manager {
       }
     }
 
-    
+    this.setupSpotLights();
     this.loadModels();
+  }
+
+  setupSpotLights() {
+    this.spotlights = {
+      left: { light: new THREE.SpotLight('white', 0), target: new THREE.Object3D() },
+      right: { light: new THREE.SpotLight('white', 0), target: new THREE.Object3D() }
+    }
+
+    const sides = ['left', 'right'];
+    sides.forEach(side => {
+      const spotLight = this.spotlights[side].light;
+      const target = this.spotlights[side].target;
+
+      spotLight.penumbra = 0.1;
+      spotLight.angle = 0.6;
+
+      spotLight.castShadow = true;
+      spotLight.shadow.mapSize.width = 1024;
+      spotLight.shadow.mapSize.height = 1024;
+      spotLight.shadow.camera.near = 1;
+      spotLight.shadow.camera.far = 10;
+      spotLight.shadow.camera.fov = 50;
+
+      spotLight.target = target;
+
+      this.stage.add(spotLight)
+      this.stage.add(target)
+    })
+
+    this.spotlights.left.light.position.set(-3, 5, 1)
+    this.spotlights.right.light.position.set(3, 5, 1)
+
   }
 
   playSound(id) {
@@ -185,8 +217,14 @@ class Manager {
   moveToDrums() {
     
 
-    gsap.to(this.stage.camera.position, { x: 0, y: 4, z: 4 })
+    gsap.to(this.stage.camera.position, { x: 0, y: 6, z: 6 })
     gsap.to(this.stage.lookAt, { x: 0, y: 1, z: -1 })
+    gsap.to(this.stage, { light: 0 })
+
+    gsap.to(this.spotlights.left.target.position, {x: -1, z: -1})
+    gsap.to(this.spotlights.right.target.position, {x: 1, z: -1})
+    gsap.to(this.spotlights.left.light, {intensity: 10, delay: 0.3})
+    gsap.to(this.spotlights.right.light, {intensity: 10, delay: 0.3})
 
     Object.keys(this.models.burger.items).forEach(key => {
       const item = this.models.burger.items[key];
@@ -194,7 +232,7 @@ class Manager {
       const delay = 0.6 - item.home.position.y * 0.6;
       gsap.to(item.position, {motionPath: [{x: pos.position.x , y: pos.position.y + 0.5 , z: pos.position.z}, {...pos.position}], delay, duration: 1, ease: 'power2.inOut'})
       gsap.to(item.rotation, {...pos.rotation, duration: 3, delay: delay + 0.5, ease: 'elastic'})
-      gsap.to(item.scale, {...pos.scale, duration: 2, delay: delay + 0.5, ease: 'elastic'})
+      gsap.to(item.scale, {...pos.scale, duration: 1, delay: delay, ease: 'power2.inOut'})
     })
     
     Object.keys(this.models.drumkit.items).forEach(key => {
@@ -221,7 +259,12 @@ class Manager {
   moveToBurger() {
 
     gsap.to(this.stage.camera.position, {...this.stage.camera.home.position})
-    gsap.to(this.stage.lookAt, { x: 0, y: 1, z: 0 })
+    gsap.to(this.stage.lookAt, { x: -1.5, y: 1, z: 0 })
+    gsap.to(this.stage, { light: 2 })
+    gsap.to(this.spotlights.left.target.position, {x: -10, y: 1})
+    gsap.to(this.spotlights.right.target.position, {x: 10, y: 1})
+    gsap.to(this.spotlights.left.light, {intensity: 0})
+    gsap.to(this.spotlights.right.light, {intensity: 0})
 
     Object.keys(this.models.burger.items).forEach(key => {
       const item = this.models.burger.items[key];

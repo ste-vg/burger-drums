@@ -31,13 +31,13 @@ class Stage {
 
   setupLights() {
 
-    const directionalLight = new THREE.DirectionalLight('#ffffff', 2);
-    directionalLight.castShadow = true;
-    directionalLight.shadow.camera.far = 10;
-    directionalLight.shadow.mapSize.set(1024, 1024);
-    directionalLight.shadow.normalBias = 0.05;
-    directionalLight.position.set(2, 4, 1);
-    this.add(directionalLight);
+    this.directionalLight = new THREE.DirectionalLight('#ffffff', 2);
+    this.directionalLight.castShadow = true;
+    this.directionalLight.shadow.camera.far = 10;
+    this.directionalLight.shadow.mapSize.set(1024, 1024);
+    this.directionalLight.shadow.normalBias = 0.05;
+    this.directionalLight.position.set(2, 4, 1);
+    this.add(this.directionalLight);
 
     const hemisphereLight = new THREE.HemisphereLight( 0xffffff, COLORS.floor, 0.5 );
     this.add(hemisphereLight)
@@ -108,6 +108,14 @@ class Stage {
   }
 
   add(element) { this.scene.add(element);}
+
+  set light(value) {
+    this.directionalLight.intensity = value;
+  }
+  
+  get light() {
+    return this.directionalLight.intensity;
+  }
   
   destroy() {
 
